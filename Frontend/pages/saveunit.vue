@@ -5,7 +5,6 @@
       style="width: 100%"
       v-model="search"
       type="year"
-      value-format="yyyy"
       placeholder="ปี"
       @change="getdata()"
     />
@@ -16,7 +15,7 @@
         style="border-radius: 15px"
       ></highcharts>
     </div>
-    <v-col>
+    <!-- <v-col>
       <v-btn
         block
         elevation="2"
@@ -25,7 +24,7 @@
         @click="dialog = !dialog"
         >เพิ่ม</v-btn
       >
-    </v-col>
+    </v-col> -->
     <v-row>
       <v-col>
         <v-simple-table class="text-center">
@@ -33,14 +32,14 @@
             <thead>
               <tr>
                 <th class="text-center" style="width: 10%">ลำดับ</th>
-                <th class="text-center">เดือนที่</th>
+                <th class="text-center">เดือน</th>
                 <th class="text-center">หน่วย</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(item, i) in items" :key="i">
                 <td>{{ i + 1 }}</td>
-                <td>{{ item.date }}</td>
+                <td>{{ checkmonth(new Date(item.date).getMonth()) }}</td>
                 <td>{{ item.unit }}</td>
               </tr>
             </tbody>
@@ -48,7 +47,7 @@
         </v-simple-table>
       </v-col>
     </v-row>
-    <v-dialog v-model="dialog" width="500" class="dialog">
+    <!-- <v-dialog v-model="dialog" width="500" class="dialog">
       <v-card style="padding: 20px" class="card">
         <p style="font-weight: bolder; font-size: 25px; text-align: center">
           เพิ่มหน่วยไฟฟ้า
@@ -111,13 +110,13 @@
           >
         </v-form>
       </v-card>
-    </v-dialog>
+    </v-dialog> -->
   </div>
 </template>
 
 <script>
 import { Chart } from "highcharts-vue";
-
+import moment from "moment";
 export default {
   components: {
     highcharts: Chart,
@@ -125,9 +124,9 @@ export default {
   watch: {
     items(newval) {
       this.chartOptions.series.data = newval.map((e) => e.unit);
-      this.chartOptions.title.text = `ปี ${(typeof this.search) == "string" ? this.search : this.search.getFullYear()}`;
+      this.chartOptions.title.text = `ปี ${moment(this.search).format("YYYY")}`;
       this.chartOptions.series.name = "ไฟฟ้าที่ใช้";
-      this.chartOptions.xAxis.categories = newval.map((e) => e.date);
+      this.chartOptions.xAxis.categories = newval.map((e) => moment(e.date).format("MMM"));
     },
     dialog(val) {
       if (!val) {
@@ -140,7 +139,7 @@ export default {
   },
   data() {
     return {
-      search: new Date(),
+      search: moment().format("YYYY"),
       dialog: false,
       dialog1: false,
       addunit: {
@@ -216,11 +215,18 @@ export default {
     this.getdata();
   },
   methods: {
+    checkmonth(index){
+      const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+      return month[index]
+    },
     async getdata() {
-      var id = (typeof this.search) == "string" ? this.search : this.search.getFullYear()
-
+      var datestart = moment(this.search);
+      var dateend = moment(this.search).add(1, "y");
       await this.$axios
-        .get(`${process.env.BASE_URL}/saveunit/all`, {params:{id: id}})
+        .post(`${process.env.BASE_URL}/saveunit/all`, {
+          datestart,
+          dateend,
+        })
         .then((response) => {
           this.items = response.data.data;
         })
@@ -228,21 +234,21 @@ export default {
           console.log(err);
         });
     },
-    async onsubmit() {
-      this.$axios
-        .post(`${process.env.BASE_URL}/saveunit/add`, {
-          ...this.addunit,
-          unit: parseInt(this.addunit.unit),
-        })
-        .then((response) => {
-          // this.items.push(response.data.data);
-          location.reload();
-          this.dialog = false;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
+    // async onsubmit() {
+    //   this.$axios
+    //     .post(`${process.env.BASE_URL}/saveunit/add`, {
+    //       ...this.addunit,
+    //       unit: parseInt(this.addunit.unit),
+    //     })
+    //     .then((response) => {
+    //       // this.items.push(response.data.data);
+    //       location.reload();
+    //       this.dialog = false;
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //     });
+    // },
   },
 };
 </script>

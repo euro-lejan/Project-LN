@@ -8,11 +8,25 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func GetallSaveunit(r string) ([]models.Saveunit, error) {
+type Getsaveunitreq struct {
+	Datestart *string `json:"datestart"`
+	Dateend   *string  `json:"dateend"`
+}
+
+func GetallSaveunit(r Getsaveunitreq) ([]models.Saveunit, error) {
 	var Saveunit []models.Saveunit
 	tx := config.DB.Begin()
 
-	if err := tx.Debug().Preload(clause.Associations).Where("date LIKE ?", r+"%").Order("id").Find(&Saveunit).Error; err != nil {
+	if err := tx.Debug().Preload(clause.Associations).Raw(`SELECT
+	DATE_TRUNC( 'month', created_at ) AS DATE,
+	SUM ( unit ) AS unit 
+FROM
+	saveunits 
+WHERE
+	created_at BETWEEN ?
+	AND ?
+GROUP BY
+	DATE_TRUNC( 'month', created_at )`, r.Datestart, r.Dateend).Find(&Saveunit).Error; err != nil {
 		println(err.Error())
 		tx.Commit()
 		return Saveunit, err

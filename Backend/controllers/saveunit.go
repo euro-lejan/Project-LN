@@ -9,15 +9,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+
 func Saveunit(router *gin.RouterGroup) {
-	router.GET("/all", GetallSaveunit)
+	router.POST("/all", GetallSaveunit)
 	router.POST("/add", CreateSaveunit)
 	router.PUT("/update", UpdateSaveunit)
 }
 
 func GetallSaveunit(c *gin.Context) {
-	var r = c.Query("id")
-	if r == "" {
+	var d repo.Getsaveunitreq
+	err := c.BindJSON(&d)
+	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"code": 400,
 			"msg":  "Bad Request, Failed Not Params",
@@ -25,7 +27,7 @@ func GetallSaveunit(c *gin.Context) {
 		return
 	}
 
-	res, err := repo.GetallSaveunit(r)
+	res, err := repo.GetallSaveunit(d)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"code": 500,

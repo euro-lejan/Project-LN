@@ -3,15 +3,15 @@
     <div class="wrapper_page">
       <h1>คาวมปลอดภัย</h1>
       <v-row class="warpper-input mt-5 py-10 drop-shadow2 card">
-        <span>กำหนดวัตถ์</span>
+        <span>กำหนดวัตต์</span>
         <v-text-field
           :disabled="!edite"
           class="mt-5"
           type="number"
           style="font-size: 20px"
-          label="ค่าวัตถ์"
+          label="ค่าวัตต์"
           v-model="item.volt"
-          suffix="Volt"
+          suffix="Wat"
         ></v-text-field>
         <v-col
           class="warpper-input d-flex"

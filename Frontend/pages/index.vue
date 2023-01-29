@@ -40,7 +40,7 @@
       <v-row>
         <v-col>
           <item-menu
-            icon="mdi-network-strength-4-cog"
+            icon="mdi-timer-cog"
             title="ข้อมูลการตั้งค่า"
             to="setting"
           ></item-menu>
@@ -48,7 +48,7 @@
 
         <v-col>
           <item-menu
-            icon="mdi-home-lightning-bolt-outline"
+            icon="mdi-meter-electric-outline"
             title="ความปลอดภัย"
             to="security"
           >
