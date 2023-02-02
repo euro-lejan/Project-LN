@@ -15,32 +15,33 @@
         style="border-radius: 15px"
       ></highcharts>
     </div>
-    <!-- <v-col>
+    <v-col>
+       <el-input class="mb-2 " type="number" v-model="cost_f" placeholder="กรอกค่าไฟ/หน่วย" />
       <v-btn
         block
         elevation="2"
         color="#526FFF"
         style="color: #fff; border-radius: 15px"
-        @click="dialog = !dialog"
-        >เพิ่ม</v-btn
+        @click="sum()"
+        >คำนวณค่าไฟ</v-btn
       >
-    </v-col> -->
+    </v-col>
     <v-row>
       <v-col>
         <v-simple-table class="text-center">
           <template v-slot:default>
             <thead>
               <tr>
-                <th class="text-center" style="width: 10%">ลำดับ</th>
                 <th class="text-center">เดือน</th>
                 <th class="text-center">หน่วย</th>
+                <th class="text-center">ค่าไฟ</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(item, i) in items" :key="i">
-                <td>{{ i + 1 }}</td>
                 <td>{{ checkmonth(new Date(item.date).getMonth()) }}</td>
-                <td>{{ item.unit }}</td>
+                <td>{{ item.unit.toLocaleString() }}</td>
+                <td>{{ (item.unit * cost).toLocaleString() }}</td>
               </tr>
             </tbody>
           </template>
@@ -146,6 +147,8 @@ export default {
         date: "",
         unit: 0,
       },
+      cost_f:3.4,
+      cost: null,
       items: [],
       unit: [],
       time: [],
@@ -213,8 +216,12 @@ export default {
   },
   mounted() {
     this.getdata();
+    this.cost = this.cost_f;
   },
   methods: {
+    sum(){
+      this.cost = this.cost_f;
+    },
     checkmonth(index){
       const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
       return month[index]
