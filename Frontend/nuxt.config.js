@@ -5,17 +5,17 @@ const env = require("./env");
 
 export default {
   server: {
-    port: 3999
+    port: 3333
   },
   env: {
     ...env,
     API_ENV: process.env.API_ENV
   },
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
-  ssr: false,
+  ssr: true,
 
   // Target: https://go.nuxtjs.dev/config-target
-  target: "static",
+  target: "server",
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
