@@ -5,7 +5,7 @@ services:
     container_name: ln_api
     restart: always
     ports:
-      - '8080:8080'
+      - '8888:8888'
     volumes:
       - ./Backend:/opt/app/api
     networks:
@@ -17,7 +17,7 @@ services:
     container_name: ln_frontend
     restart: always
     ports:
-      - "3000:3000"
+      - "3333:3333"
     networks:
       - ln_network
 
