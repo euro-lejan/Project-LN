@@ -4,7 +4,7 @@ WORKDIR /ln-backend
 
 COPY . .
 RUN go mod download
-RUN go build 
+RUN go build -o main .
 EXPOSE 8888
 
-#ENTRYPOINT ["./ln-backend"]
+CMD ["./main"]
