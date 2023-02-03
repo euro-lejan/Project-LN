@@ -5,11 +5,11 @@ envCf.config();
 let env = {
 	development: {
 		VERSION: '1.0.0(beta)',
-		BASE_URL:'http://localhost:8080',
+		BASE_URL:'https://ln-api.ichigozdata.win',
 	},
 	production: {
 		VERSION: '1.0.1',
-		BASE_URL:'http://localhost:8081',
+		BASE_URL:'https://ln-api.ichigozdata.win',
 	},
 }
 

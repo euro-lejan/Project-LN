@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  api:
+    build: ./Backend
+    container_name: ln_api
+    restart: always
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./Backend:/opt/app/api
+    networks:
+      - ln_network
+  web:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: ln_frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - ln_network
+
+networks:
+  ln_network:
+    driver: bridge
