@@ -2,7 +2,7 @@ version: '3.8'
 services:
   api:
     build: ./Backend
-    container_name: ball_api
+    container_name: ln_api
     restart: always
     ports:
       - '8080:8080'
@@ -14,7 +14,7 @@ services:
     build:
       context: ./Frontend
       dockerfile: Dockerfile
-    container_name: ball_frontend
+    container_name: ln_frontend
     restart: always
     ports:
       - "3000:3000"
