@@ -5,7 +5,7 @@ const env = require("./env");
 
 export default {
   server: {
-    port: 3999
+    port: 3333
   },
   env: {
     ...env,
