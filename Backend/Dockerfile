@@ -7,4 +7,4 @@ RUN go mod download
 RUN go build 
 EXPOSE 8888
 
-ENTRYPOINT ["./ln-backend"]
+ENTRYPOINT ["./Backend"]
