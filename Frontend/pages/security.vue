@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <div class="wrapper_page">
-      <h1>คาวมปลอดภัย</h1>
+      <h1>ความปลอดภัย</h1>
       <v-row class="warpper-input mt-5 py-10 drop-shadow2 card">
         <span>กำหนดวัตต์</span>
         <v-text-field
