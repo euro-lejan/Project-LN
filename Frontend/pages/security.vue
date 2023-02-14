@@ -11,7 +11,7 @@
           style="font-size: 20px"
           label="ค่าวัตต์"
           v-model="item.volt"
-          suffix="Wat"
+          suffix="Watt"
         ></v-text-field>
         <v-col
           class="warpper-input d-flex"
