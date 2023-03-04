@@ -18,15 +18,33 @@
             solo
           ></v-select>
           <p v-if="time.type != 1">เลือกวัน</p>
-          <v-select
-            v-if="time.type != 1"
-            :items="items"
-            item-value="id"
-            item-text="name"
-            v-model="time.day"
-            solo
-            placeholder="วัน"
-          ></v-select>
+          <v-row class="d-flex" style="align-items: baseline">
+            <v-col>
+              <v-select
+                
+                v-if="time.type != 1"
+                :items="items"
+                item-value="id"
+                item-text="name"
+                v-model="time.daystart"
+                solo
+                placeholder="วันเริ่มต้น"
+              ></v-select>
+            </v-col>
+            <p>{{ " - " }}</p>
+            <v-col>
+              <v-select
+               
+                v-if="time.type != 1"
+                :items="items"
+                item-value="id"
+                item-text="name"
+                v-model="time.dayend"
+                solo
+                placeholder="วันสิ้นสุด"
+              ></v-select>
+            </v-col>
+          </v-row>
           <p>เวลาเริ่มต้น</p>
           <v-dialog
             v-if="time.type == 1"
@@ -130,9 +148,11 @@ export default {
       dateend: false,
       time: {
         type: 0,
-        day: 1,
+        daystart: 1,
+        dayend: 1,
         datestart: null,
         dateend: null,
+
         timestart: null,
         timeend: null,
       },
@@ -153,13 +173,15 @@ export default {
   },
   mounted() {
     this.$axios
-        .get(`${process.env.BASE_URL}/template/detail`, {params:{id: this.$route.params.id}})
-        .then((response) => {
-          this.time = response.data.data
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      .get(`${process.env.BASE_URL}/template/detail`, {
+        params: { id: this.$route.params.id },
+      })
+      .then((response) => {
+        this.time = response.data.data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   },
   methods: {
     // FUNTION ONSUBMIT
@@ -167,7 +189,7 @@ export default {
       this.$axios
         .put(`${process.env.BASE_URL}/template/update`, this.time)
         .then((response) => {
-          this.$router.go(-1)
+          this.$router.go(-1);
         })
         .catch((err) => {
           console.log(err);
@@ -185,7 +207,7 @@ export default {
   .warpper-input {
     display: flex;
     flex-direction: column;
-    padding: 0px 20px ;
+    padding: 0px 20px;
     justify-content: center;
     text-align: left;
   }

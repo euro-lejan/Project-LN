@@ -6,10 +6,11 @@ import (
 )
 
 type Template struct {
-	ID        *uint      `gorm:"primary_key; auto_increment; index; " json:"templateId,omitempty" `
-	Name      *string    `json:"name"`
-	Type      *uint    `json:"type"`
-	Day       *uint    `json:"day"`
+	ID       *uint   `gorm:"primary_key; auto_increment; index; " json:"templateId,omitempty" `
+	Name     *string `json:"name"`
+	Type     *uint   `json:"type"`
+	Daystart *uint   `json:"daystart"`
+	Dayend   *uint   `json:"dayend"`
 	Datestart *string `json:"datestart"`
 	DateEnd   *string `json:"dateend"`
 	Timestart *string `json:"timestart"`
