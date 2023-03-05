@@ -1,5 +1,18 @@
 version: '3.8'
 services:
+  db:
+    image: postgres
+    container_name: ln_db
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+    networks:
+      - ln_network
   api:
     build: ./Backend
     container_name: ln_api
@@ -21,7 +34,9 @@ services:
     networks:
       - ln_network
     command: "npm run start"
-
+volumes:
+  db:
+    driver: local
 networks:
   ln_network:
     driver: bridge
