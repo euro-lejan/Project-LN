@@ -10,7 +10,7 @@ import (
 
 type Getsaveunitreq struct {
 	Datestart *string `json:"datestart"`
-	Dateend   *string  `json:"dateend"`
+	Dateend   *string `json:"dateend"`
 }
 
 func GetallSaveunit(r Getsaveunitreq) ([]models.Saveunit, error) {
@@ -19,7 +19,7 @@ func GetallSaveunit(r Getsaveunitreq) ([]models.Saveunit, error) {
 
 	if err := tx.Debug().Preload(clause.Associations).Raw(`SELECT
 	DATE_TRUNC( 'month', created_at ) AS DATE,
-	SUM ( unit ) AS unit 
+	MAX(unit) AS unit 
 FROM
 	saveunits 
 WHERE
