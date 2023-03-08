@@ -13,7 +13,7 @@
             {{ item.timestart + " : " + item.timeend }}
           </p>
           <b v-if="item.type == 0" class="mb-0" style="font-size: 15px">
-            {{ checkday(item.daystart) + checkday(item.dayend) }}
+            {{ checkday(item.daystart) + " ถึง " + checkday(item.dayend) }}
           </b>
           <b v-if="item.type == 1" class="mb-0" style="font-size: 15px">
             {{ item.datestart + " ถึง " + item.dateend }}
