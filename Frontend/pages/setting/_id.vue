@@ -20,8 +20,7 @@
           <p v-if="time.type != 1">เลือกวัน</p>
           <v-row class="d-flex" style="align-items: baseline">
             <v-col>
-              <v-select
-                
+              <v-select 
                 v-if="time.type != 1"
                 :items="items"
                 item-value="id"

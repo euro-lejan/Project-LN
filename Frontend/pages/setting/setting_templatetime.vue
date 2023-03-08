@@ -18,15 +18,32 @@
             solo
           ></v-select>
           <p v-if="time.type != 1">เลือกวัน</p>
-          <v-select
-            v-if="time.type != 1"
-            :items="items"
-            item-value="id"
-            item-text="name"
-            v-model="time.day"
-            solo
-            placeholder="วัน"
-          ></v-select>
+          <v-row class="d-flex" style="align-items: baseline">
+            <v-col>
+              <v-select 
+                v-if="time.type != 1"
+                :items="items"
+                item-value="id"
+                item-text="name"
+                v-model="time.daystart"
+                solo
+                placeholder="วันเริ่มต้น"
+              ></v-select>
+            </v-col>
+            <p>{{ " - " }}</p>
+            <v-col>
+              <v-select
+               
+                v-if="time.type != 1"
+                :items="items"
+                item-value="id"
+                item-text="name"
+                v-model="time.dayend"
+                solo
+                placeholder="วันสิ้นสุด"
+              ></v-select>
+            </v-col>
+          </v-row>
           <p>เวลาเริ่มต้น</p>
           <v-dialog
             v-if="time.type == 1"
