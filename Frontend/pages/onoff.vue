@@ -136,8 +136,14 @@ export default {
       this.dialog = !this.dialog;
     },
     async onsubmit() {
+      console.log(this.detail);
       await this.$axios
-        .post(`${process.env.BASE_URL}/channels/update`, this.detail)
+        .post(`${process.env.BASE_URL}/channels/update`, {
+          channelId: this.detail.channelId,
+          name: this.detail.name,
+          templateId: this.detail.templateId,
+          templatestatus: this.detail.templatestatus,
+        })
         .then((response) => {
           this.dialog = !this.dialog;
           location.reload();
