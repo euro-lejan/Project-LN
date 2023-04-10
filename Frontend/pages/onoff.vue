@@ -18,6 +18,7 @@
                 small
                 @click="editchanal(item, i)"
               >
+              
                 <v-icon dark left> mdi-pencil-box-multiple </v-icon>
                 แก้ไข
               </v-btn></span
