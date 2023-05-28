@@ -5,8 +5,7 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-
-	"backend/models"
+	// "backend/models"
 )
 
 var DB *gorm.DB
@@ -19,13 +18,13 @@ func ConnectDB() error {
 		fmt.Println("postgres err: " + err.Error())
 		panic(err)
 	}
-	migrateDB()
+	// migrateDB()
 	return err
 }
 
-func migrateDB() {
-	DB.AutoMigrate(models.Channel{})
-	DB.AutoMigrate(models.Template{})
-	DB.AutoMigrate(models.Savety{})
-	DB.AutoMigrate(models.Saveunit{})
-}
+// func migrateDB() {
+// 	DB.AutoMigrate(models.Channel{})
+// 	DB.AutoMigrate(models.Template{})
+// 	DB.AutoMigrate(models.Savety{})
+// 	DB.AutoMigrate(models.Saveunit{})
+// }

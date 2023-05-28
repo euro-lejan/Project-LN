@@ -1,13 +1,50 @@
 <template>
   <div class="wrapper_page">
     <h1 class="mb-10">บันทึกหน่วยไฟฟ้า</h1>
-    <el-date-picker
-      style="width: 100%"
-      v-model="search"
-      type="year"
-      placeholder="ปี"
-      @change="getdata()"
-    />
+    <v-row>
+      <v-col cols="5">
+        <el-select v-model="type" placeholder="Select">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          >
+          </el-option> </el-select
+      ></v-col>
+      <v-col>
+        <el-date-picker
+          v-if="type == 'month'"
+          style="width: 100%"
+          v-model="search"
+          type="year"
+          placeholder="ปี"
+          @change="getdata()"
+          format="yyyy"
+          value-format="yyyy-MM-dd"
+        />
+        <el-date-picker
+          v-else-if="type == 'day'"
+          style="width: 100%"
+          v-model="search"
+          type="month"
+          placeholder="เดือน"
+          @change="getdata()"
+          format="MM-yyyy"
+          value-format="yyyy-MM-dd"
+        />
+        <el-date-picker
+          v-else
+          style="width: 100%"
+          v-model="search"
+          type="date"
+          placeholder="วัน"
+          @change="getdata()"
+          format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd"
+        />
+      </v-col>
+    </v-row>
     <div class="card my-2">
       <highcharts
         v-if="showing"
@@ -16,7 +53,12 @@
       ></highcharts>
     </div>
     <v-col>
-       <el-input class="mb-2 " type="number" v-model="cost_f" placeholder="กรอกค่าไฟ/หน่วย" />
+      <el-input
+        class="mb-2"
+        type="number"
+        v-model="cost_f"
+        placeholder="กรอกค่าไฟ/หน่วย"
+      />
       <v-btn
         block
         elevation="2"
@@ -32,92 +74,45 @@
           <template v-slot:default>
             <thead>
               <tr>
-                <th class="text-center">เดือน</th>
+                <th class="text-center">
+                  {{
+                    type == "month" ? "เดือน" : type == "day" ? "วัน" : "เวลา"
+                  }}
+                </th>
                 <th class="text-center">หน่วย</th>
                 <th class="text-center">ค่าไฟ</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(item, i) in items" :key="i">
-                <td>{{ checkmonth(new Date(item.date).getMonth()) }}</td>
-                <td>{{ item.unit.toLocaleString() }}</td>
-                <td>{{ (item.unit * cost).toLocaleString() }}</td>
+                <td>
+                  {{
+                    type == "month"
+                      ? checkmonth($moment(item.date).month())
+                      : type == "day"
+                      ? $moment(item.date).format("DD/MM/yyyy")
+                      : $moment(item.date).subtract(7, "hour").format("HH:mm")
+                  }}
+                </td>
+                <td>
+                  {{ item.unit.toLocaleString() }}
+                </td>
+                <td>
+                  {{ (item.unit * cost).toLocaleString() }}
+                </td>
               </tr>
             </tbody>
           </template>
         </v-simple-table>
       </v-col>
     </v-row>
-    <!-- <v-dialog v-model="dialog" width="500" class="dialog">
-      <v-card style="padding: 20px" class="card">
-        <p style="font-weight: bolder; font-size: 25px; text-align: center">
-          เพิ่มหน่วยไฟฟ้า
-        </p>
-        <v-form ref="form" @submit.prevent="onsubmit">
-          <v-menu
-            ref="menu"
-            v-model="dialog1"
-            :close-on-content-click="false"
-            :return-value.sync="addunit.date"
-            transition="scale-transition"
-            offset-y
-            max-width="290px"
-            min-width="auto"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-model="addunit.date"
-                label="เลือกเดือน"
-                readonly
-                v-bind="attrs"
-                v-on="on"
-                solo
-              ></v-text-field>
-            </template>
-            <v-date-picker
-              v-model="addunit.date"
-              type="month"
-              no-title
-              scrollable
-            >
-              <v-spacer></v-spacer>
-              <v-btn text color="primary" @click="dialog1 = false">
-                Cancel
-              </v-btn>
-              <v-btn
-                text
-                color="primary"
-                @click="$refs.menu.save(addunit.date)"
-              >
-                OK
-              </v-btn>
-            </v-date-picker>
-          </v-menu>
-          <v-text-field
-            type="number"
-            label="ค่าวัตถ์"
-            suffix="หน่วย"
-            solo
-            v-model="addunit.unit"
-          ></v-text-field>
-
-          <v-btn
-            block
-            elevation="2"
-            color="#526FFF"
-            style="color: #fff; border-radius: 15px"
-            type="submit"
-            >บันทึก</v-btn
-          >
-        </v-form>
-      </v-card>
-    </v-dialog> -->
   </div>
 </template>
 
 <script>
 import { Chart } from "highcharts-vue";
 import moment from "moment";
+import constants from "@/constants/variable";
 export default {
   components: {
     highcharts: Chart,
@@ -125,29 +120,55 @@ export default {
   watch: {
     items(newval) {
       this.chartOptions.series.data = newval.map((e) => e.unit);
-      this.chartOptions.title.text = `ปี ${moment(this.search).format("YYYY")}`;
+      this.chartOptions.title.text =
+        this.type == "month"
+          ? `ปี ${moment(this.search).format("yyyy")}`
+          : this.type == "day"
+          ? `เดือน ${
+              constants.TH_MONTH.FULL[moment(this.search).month() + 1] +
+              " " +
+              moment(this.search).format("yyyy")
+            }`
+          : `วัน ${moment(this.search).format("DD-MM-yyyy")}`;
       this.chartOptions.series.name = "ไฟฟ้าที่ใช้";
-      this.chartOptions.xAxis.categories = newval.map((e) => moment(e.date).format("MMM"));
+      this.chartOptions.xAxis.categories = newval.map((e) =>
+        this.type == "month"
+          ? constants.TH_MONTH.FULL[moment(e.date).month() + 1]
+          : this.type == "day"
+          ? moment(e.date).format("DD/MM")
+          : moment(e.date).subtract(7, "hour").format("HH:mm")
+      );
     },
-    dialog(val) {
-      if (!val) {
-        this.addunit = {
-          date: "",
-          unit: 0,
-        };
-      }
+    type() {
+      this.search = moment(this.search).format("yyyy-01-01");
+      this.getdata();
     },
   },
   data() {
     return {
-      search: moment().format("YYYY"),
+      type: "month",
+      options: [
+        {
+          value: "month",
+          label: "รายปี",
+        },
+        {
+          value: "day",
+          label: "รายเดือน",
+        },
+        {
+          value: "hour",
+          label: "รายวัน",
+        },
+      ],
+      search: moment().format("yyyy-01-01"),
       dialog: false,
       dialog1: false,
       addunit: {
         date: "",
         unit: 0,
       },
-      cost_f:3.4,
+      cost_f: 3.4,
       cost: null,
       items: [],
       unit: [],
@@ -168,20 +189,7 @@ export default {
           height: 200,
         },
         xAxis: {
-          categories: [
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-          ],
+          categories: [],
         },
         legend: {
           layout: "vertical",
@@ -191,7 +199,7 @@ export default {
 
         series: {
           name: "ค่าไฟ(หน่วย)",
-          data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          data: [],
         },
 
         responsive: {
@@ -219,20 +227,30 @@ export default {
     this.cost = this.cost_f;
   },
   methods: {
-    sum(){
+    sum() {
       this.cost = this.cost_f;
     },
-    checkmonth(index){
-      const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-      return month[index]
+    checkmonth(index) {
+      return constants.TH_MONTH.FULL[index + 1];
     },
     async getdata() {
-      var datestart = moment(this.search);
-      var dateend = moment(this.search).add(1, "y");
+      console.log(this.search);
+      console.log(moment(this.search).format("yyyy-MM-DD"));
+      var datestart = moment(this.search).format("yyyy-MM-DD");
+      var dateend = moment(this.search)
+        .add(1, this.type == "month" ? "y" : this.type == "day" ? "M" : "d")
+        .format("yyyy-MM-DD");
+
+      console.log({
+        time: datestart,
+        dateend,
+        type: this.type,
+      });
       await this.$axios
         .post(`${process.env.BASE_URL}/saveunit/all`, {
           datestart,
           dateend,
+          type: this.type,
         })
         .then((response) => {
           this.items = response.data.data;
@@ -241,24 +259,8 @@ export default {
           console.log(err);
         });
     },
-    // async onsubmit() {
-    //   this.$axios
-    //     .post(`${process.env.BASE_URL}/saveunit/add`, {
-    //       ...this.addunit,
-    //       unit: parseInt(this.addunit.unit),
-    //     })
-    //     .then((response) => {
-    //       // this.items.push(response.data.data);
-    //       location.reload();
-    //       this.dialog = false;
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // },
   },
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
