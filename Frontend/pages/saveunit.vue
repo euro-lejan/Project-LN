@@ -95,10 +95,10 @@
                   }}
                 </td>
                 <td>
-                  {{ item.unit.toLocaleString() }}
+                  {{ (item.unit/1000).toLocaleString() }}
                 </td>
                 <td>
-                  {{ (item.unit * cost).toLocaleString() }}
+                  {{ ((item.unit/1000) * cost).toLocaleString() }}
                 </td>
               </tr>
             </tbody>
