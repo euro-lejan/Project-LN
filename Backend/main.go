@@ -4,8 +4,8 @@ import (
 	"log"
 
 	"backend/config"
-	"backend/middlewares"
 	ctrl "backend/controllers"
+	"backend/middlewares"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,6 +27,6 @@ func main() {
 	ctrl.Template(router.Group("/template"))
 	ctrl.Savety(router.Group("/savety"))
 	ctrl.Saveunit(router.Group("/saveunit"))
-
+	ctrl.SaveNodeMCU(router.Group("/nodemcu"))
 	router.Run(":8888")
 }

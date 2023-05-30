@@ -6,6 +6,25 @@
         <v-col>
           <div
             class="background drop-shadow2 styleblox"
+            :style="{
+              'background-color': mcu_status ? '#73C088' : '#FF0000',
+              height: '100%',
+              color: '#fff',
+              'align-items': 'center',
+              'text-align': 'center',
+            }"
+          >
+            <b style="font-size: 55px">
+              <span v-if="mcu_status">สถานะเชื่อมต่ออยู่</span>
+              <span v-else>ขาดการเชื่อมต่อ</span>
+            </b>
+          </div>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <div
+            class="background drop-shadow2 styleblox"
             style="
             background-color: #73C088
               height: 100%;
@@ -66,6 +85,7 @@ export default {
   data() {
     return {
       lengthdata: null,
+      mcu_status: true,
     };
   },
   mounted() {
@@ -75,6 +95,21 @@ export default {
         this.lengthdata = response.data.data.filter(
           (e) => e.status == true
         ).length;
+
+        return this.$axios.get(`${process.env.BASE_URL}/nodemcu/status`); // เปลี่ยน URL ให้เป็น http://localhost:8888/nodemcu/status
+      })
+      .then((response) => {
+        const millis = response.data.millis; // รับค่า millis จาก API แทน timestamp
+
+        const currentMillis = new Date().getTime(); // เวลาปัจจุบันในรูปแบบ millis
+
+        const millisDifference = currentMillis - parseInt(millis); // คำนวณระยะห่างระหว่างเวลา
+
+        if (millisDifference > 15000) {
+          this.mcu_status = false; // ถ้าระยะห่างเกิน 15 วินาที
+        } else {
+          this.mcu_status = true; // ถ้าระยะห่างไม่เกิน 15 วินาที
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -82,6 +117,7 @@ export default {
   },
 };
 </script>
+
 
 <style>
 </style>

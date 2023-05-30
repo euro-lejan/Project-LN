@@ -28,4 +28,5 @@ func migrateDB() {
 	DB.AutoMigrate(models.Template{})
 	DB.AutoMigrate(models.Savety{})
 	DB.AutoMigrate(models.Saveunit{})
+	DB.AutoMigrate(models.NodeMCU{})
 }
