@@ -17,10 +17,10 @@ type Getsaveunitreq struct {
 func GetallSaveunit(r Getsaveunitreq) ([]models.Saveunit, error) {
 	var Saveunit []models.Saveunit
 	query := `
-		SELECT DATE_TRUNC('` + *r.Type + `', date) AS date, SUM(saveunits.unit) AS unit
+		SELECT DATE_TRUNC('` + *r.Type + `', date) AS DATE, SUM(saveunits.unit) AS unit
 		FROM saveunits
 		WHERE date BETWEEN ? AND ?
-		GROUP BY DATE_TRUNC('` + *r.Type + `', date) Order by date`
+		GROUP BY DATE_TRUNC('` + *r.Type + `', saveunits.date) Order by DATE`
 	tx := config.DB.Begin()
 
 	if err := tx.Debug().Raw(query, r.Datestart, r.Dateend).Find(&Saveunit).Error; err != nil {
