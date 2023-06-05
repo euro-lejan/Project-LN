@@ -9,7 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
 func Saveunit(router *gin.RouterGroup) {
 	router.POST("/all", GetallSaveunit)
 	router.POST("/add", CreateSaveunit)
@@ -42,7 +41,7 @@ func GetallSaveunit(c *gin.Context) {
 }
 
 func CreateSaveunit(c *gin.Context) {
-	var d models.Saveunit
+	var d models.Requnit
 	err := c.BindJSON(&d)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -67,7 +66,6 @@ func CreateSaveunit(c *gin.Context) {
 		"data": res,
 	})
 }
-
 
 func UpdateSaveunit(c *gin.Context) {
 	var d models.Saveunit

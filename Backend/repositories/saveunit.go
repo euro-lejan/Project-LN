@@ -11,22 +11,19 @@ import (
 type Getsaveunitreq struct {
 	Datestart *string `json:"datestart"`
 	Dateend   *string `json:"dateend"`
+	Type      *string `json:"type"`
 }
 
 func GetallSaveunit(r Getsaveunitreq) ([]models.Saveunit, error) {
 	var Saveunit []models.Saveunit
+	query := `
+		SELECT DATE_TRUNC('` + *r.Type + `', date) AS date, SUM(saveunits.unit) AS unit
+		FROM saveunits
+		WHERE date BETWEEN ? AND ?
+		GROUP BY DATE_TRUNC('` + *r.Type + `', date) Order by date`
 	tx := config.DB.Begin()
 
-	if err := tx.Debug().Preload(clause.Associations).Raw(`SELECT
-	DATE_TRUNC( 'month', created_at ) AS DATE,
-	MAX(unit) AS unit 
-FROM
-	saveunits 
-WHERE
-	created_at BETWEEN ?
-	AND ?
-GROUP BY
-	DATE_TRUNC( 'month', created_at )`, r.Datestart, r.Dateend).Find(&Saveunit).Error; err != nil {
+	if err := tx.Debug().Raw(query, r.Datestart, r.Dateend).Find(&Saveunit).Error; err != nil {
 		println(err.Error())
 		tx.Commit()
 		return Saveunit, err
@@ -37,15 +34,37 @@ GROUP BY
 	return Saveunit, nil
 }
 
-func CreateSaveunit(d models.Saveunit) (models.Saveunit, error) {
+func CreateSaveunit(d models.Requnit) (models.Saveunit, error) {
+	var Lastunit models.Saveunit
 	tx := config.DB.Begin()
-	if err := tx.Debug().Clauses(clause.OnConflict{DoNothing: true}).Create(&d).Error; err != nil {
+	if err := tx.Clauses(clause.OnConflict{DoNothing: true}).Last(&Lastunit).Error; err != nil {
+		num := float32(0)
+		data := models.Saveunit{
+			BfUnit: &num,
+			AtUnit: d.Unit,
+			Unit:   d.Unit,
+			Date:   d.Date,
+		}
+		if err := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&data).Error; err != nil {
+			tx.Commit()
+			return data, err
+		}
 		tx.Commit()
-		return d, err
+		return data, nil
 	}
-
+	Unit := *d.Unit - *Lastunit.AtUnit
+	data := models.Saveunit{
+		BfUnit: Lastunit.AtUnit,
+		AtUnit: d.Unit,
+		Unit:   &Unit,
+		Date:   d.Date,
+	}
+	if err := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&data).Error; err != nil {
+		tx.Commit()
+		return data, err
+	}
 	tx.Commit()
-	return d, nil
+	return data, nil
 }
 
 func UpdateSaveunit(d models.Saveunit) (models.Saveunit, error) {

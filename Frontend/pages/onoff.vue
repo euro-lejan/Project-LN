@@ -27,7 +27,7 @@
             รูปแบบ : {{ !item.templatestatus ? "กำหนดเอง" : "ตั้งเวลา" }}
           </p>
           <p v-if="item.templatestatus" class="mb-0" style="font-size: 15px">
-            ชื่อรูปแบบ : {{ item.template.name }}
+            ชื่อรูปแบบ : {{ item.template?.name ? item.template.name : "-" }}
           </p>
         </v-col>
         <v-switch
@@ -89,7 +89,7 @@ export default {
       ],
       dialog: false,
       detail: {
-        name: "",
+        name: null,
         type: null,
         templateId: null,
       },
