@@ -6,7 +6,7 @@ services:
     restart: always
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=ln-postgres
+      - POSTGRES_PASSWORD=6C6E2D706F737467726573
     ports:
       - '5432:5432'
     volumes: 
